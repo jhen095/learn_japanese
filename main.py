@@ -11,7 +11,7 @@ from os import listdir
 import os.path
 import random
 import signal
-from termcolor import colored as _
+#from termcolor import colored as _
 import sys
 
 
@@ -31,12 +31,12 @@ class Vocabulary:
 
     def __init__(self, f_vocab):
         self.f_vocab = f_vocab
-        self.db_path = os.path.join(USER_DIR, f_vocab.name.split("/")[-1])
+        self.db_path = os.path.join(USER_DIR, f_vocab.name.split("\\")[-1])
         # from the name of the file, we try to get the name of the class
         try:
             """ get the type of class with the filename """
             self.t_class = D_CLASSES[[key for key in D_CLASSES if key in
-                                      f_vocab.name.split("/")[-1]][0]]
+                                      f_vocab.name.split("\\")[-1]][0]]
         except:
             key = raw_input("What is the class associated?\n%s" %
                             "".join(["\t%s\n" % key for key in D_CLASSES]))
@@ -94,13 +94,13 @@ class Vocabulary:
                 # if the question doesn't start with #, it's fine
                 break
         print question
-        answer = raw_input(_("Answer :", "blue"))
+        answer = raw_input("Answer :") #, "blue"))
         response = question.verify(answer)
         print response
         if "False, the answer was" in response:
             # We ask the user to write down the answer 3 times
-            print _("\tWrite the answer 3 times :", "yellow")
-            [raw_input(_("\t\t%d: " % i, "yellow")) for i in range(3)]
+            print "\tWrite the answer 3 times :" #, "yellow")
+            [raw_input("\t\t%d: " % i) for i in range(3)]
 
     def signal_handler(self, signal, frame):
         """Save the data in the file before exiting the program"""
@@ -155,12 +155,12 @@ class Question(object):
         self.congrats = ["Yes", "Good", "Perfect", "Congrats"]
 
     def __str__(self):
-        question = _("Question", "blue")
+        question = "Question" #, "blue")
         infos = []
         if self.success:
-            infos.append("found:%s" % _(self.success, "green"))
+            infos.append("found:%s" % self.success)#, "green"))
         if self.failure:
-            infos.append("failed:%s" % _(self.failure, "red"))
+            infos.append("failed:%s" % self.failure)#, "red"))
         if infos:
             question += " (%s)" % ', '.join(infos)
         return "%s\n\t%s" % (question, self.question)
@@ -182,9 +182,9 @@ class Question(object):
     @classmethod
     def _stats(cls):
         """Class function to get some stats on its instances"""
-        return " - %s bad answers\n" % _(len(cls.questions_failed), "red") +\
-               " - %s correct answers\n" % _(cls.total_success, "green") +\
-               " - %s archived \n" % _(cls.total_commented, "yellow") +\
+        return " - %s bad answers\n" % len(cls.questions_failed) +\
+               " - %s correct answers\n" % cls.total_success +\
+               " - %s archived \n" % cls.total_commented +\
                " - %s unanswered questions\n" % cls.total_unanswered +\
                " - %s total question\n\n" % cls.total_questions
 
@@ -206,17 +206,17 @@ class Question(object):
             """ If I know the question/answer, don't bother and remove it
             now from the vocabulary"""
             self.question = "#%s" % self.question
-            return _("The sentence '%s' will be removed for the next "\
-                "session" % self.answer, "yellow", attrs=["bold"])
+            return "The sentence '%s' will be removed for the next "\
+                "session" % self.answer #, "yellow", attrs=["bold"])
         elif answer in ("@%s" % self.answer, self.answer):
             self.success += 1
             response = random.choice(self.congrats)
             if answer.startswith("@"):
                 response += ", it was '%s'" % self.answer
-            return _(response, "green")
+            return response #, "green")
         else:
             self.failure += 1
-            return _("False, the answer was '%s'" % self.answer, "red")
+            return "False, the answer was '%s'" % self.answer #, "red")
 
     def update(self, index, question, answer, success, failure):
         """We keep the text from the vocabulary folder, which is the most up to
@@ -259,8 +259,8 @@ class Q_Japanese(Question):
     def _stats(cls):
       #print "bob"
       #return super(Q_Japanese, cls)._stats()
-      stats = _("Hint:\n\t- (*2): polite form + -te form"\
-                   "\n\t- (#2): infinitive + -te form\n\n", "cyan")
+      stats = ("Hint:\n\t- (*2): polite form + -te form"\
+                   "\n\t- (#2): infinitive + -te form\n\n")#, "cyan")
       stats += super(Q_Japanese, cls)._stats()
       return stats
 
@@ -278,7 +278,7 @@ def get_file_language():
     # ask the user choice
     question = "Choose a language from the list below:\n%s\n=> " % l_langs
     while True:
-        answer = raw_input(_(question, "blue"))
+        answer = raw_input(question)
         if answer in [str(i) for i in range(1, len(l_files) + 1)]:
             break
     # return file
@@ -291,17 +291,17 @@ if __name__ == "__main__":
 
     # Welcome message
     title = "welcome to 'learn a language'".title()
-    print _("\n\n\t\t%s\n\n" % title, "red",
-        attrs=["bold", "underline"])
+    print ("\n\n\t\t%s\n\n" % title)
+	#"red", attrs=["bold", "underline"])
 
     # Choose Language
     vocab_file = get_file_language()
 
     # Another message with some shortcuts tips
-    print _("The program will now start\n\t"
+    print ("The program will now start\n\t"
         "- press '#' to remove the question\n\t"
-        "- press ctrl-C to quit the program\n\n",
-        "magenta", attrs=["bold"])
+        "- press ctrl-C to quit the program\n\n")
+        #"magenta", attrs=["bold"])
 
     # Vocabulary creation
     my_vocabulary = Vocabulary(vocab_file)
